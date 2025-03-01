@@ -90,7 +90,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
         read -r -p "Select: " input
         case "$input" in
           [Uu][pp]*)
-            { rm $HOME/grade2zsh.sh && curl -o "$HOME/grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh"; } > /dev/null 2>&1
+            curl -o "$HOME/grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh" > /dev/null 2>&1
             # echo "$running Updating Termux pkg.."
             # pkg upgrade -y > /dev/null 2>&1
             if apt list --upgradeable 2>/dev/null | grep -q "^git/"; then
@@ -158,7 +158,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
                 echo "$running Uninstalling zsh.."
                 pkg uninstall zsh -y > /dev/null 2>&1
                 #echo "$running Remove grade2zsh.sh file.."
-                #rm $fullScriptPath
+                rm $PREFIX/bin/grade2zsh && rm $HOME/grade2zsh.sh  #rm $fullScriptPath
                 # exec $PREFIX/bin/zsh  # Restart zsh Interpreter
                 sleep 1  # wait 1 second
                 clear  # clear Terminal
