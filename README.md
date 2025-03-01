@@ -16,14 +16,11 @@ Customize your Termux by upgrade to zsh
 - Open [Termux](https://github.com/termux/termux-app/releases/) and run the script with the following command:
 
   ```
-  curl -o "$HOME/grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh" && clear
+  curl -o "$HOME/grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh" && clear && sh $HOME/grade2zsh.sh
   ```
+  run
   ```
-  sh $HOME/grade2zsh.sh
-  ```
-  or
-  ```
-  sh grade2zsh.sh
+  grade2zsh
   ```
 
   > This script was tested on an Android device running Android 14 with AOSP based custom ROM with Termux v0.118.1 .
