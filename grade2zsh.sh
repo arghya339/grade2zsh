@@ -120,7 +120,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
             sh $HOME/.oh-my-zsh/tools/uninstall.sh
             # rm -rf ~/.oh-my-zsh
             rm ~/.zshrc.omz-uninstalled-$(date +%Y-%m-%d_%H)*
-            rm ~/.zsh_history
+            # rm ~/.zsh_history
             yes | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" > /dev/null 2>&1
             # echo "zstyle ':omz:update' mode auto  # update automatically without asking" >> ~/.zshrc  # Add zsh Auto update config in oh-my-zsh zshrc file
             echo "zstyle ':omz:update' verbose silent # only errors"  >> ~/.zshrc  # omz setting for silent update
