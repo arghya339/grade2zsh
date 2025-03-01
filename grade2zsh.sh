@@ -1,4 +1,7 @@
-#!/usr/bin/bash
+#!/usr/bin/dash
+
+ln -s $HOME/grade2zsh.sh $PREFIX/bin/grade2zsh  # symlink (shortcut of grade2zsh.sh)
+chmod +x $HOME/grade2zsh.sh  # give execute permission to grade2zsh
 
 # Apply the grade2zsh color to the eye shape and print it
 Reset='\033[0m'
@@ -223,7 +226,7 @@ else
     cat ~/.zshrc | grep ^'source "$ZSH/custom/plugins/zsh-autosuggestions"'  # print added line
     echo " 1740403030:0;exit" >> ~/.zsh_history  # add exit command to .zsh_history file for auto suggestions
     echo "
-    : 1740407010:0;sh grade2zsh.sh" >> ~/.zsh_history  # add script command to .zsh_history file for auto suggestions
+    : 1740407010:0;grade2zsh" >> ~/.zsh_history  # add script command to .zsh_history file for auto suggestions
   fi
 
   # clone and add zsh-syntax-highlighting plugins to oh-my-zsh
