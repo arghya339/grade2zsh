@@ -1,6 +1,8 @@
 #!/usr/bin/dash
 
-ln -s $HOME/grade2zsh.sh $PREFIX/bin/grade2zsh  # symlink (shortcut of grade2zsh.sh)
+if [ ! -f "$PREFIX/bin/grade2zsh" ]; then
+  ln -s $HOME/grade2zsh.sh $PREFIX/bin/grade2zsh  # symlink (shortcut of grade2zsh.sh)
+fi
 chmod +x $HOME/grade2zsh.sh  # give execute permission to grade2zsh
 
 # Apply the grade2zsh color to the eye shape and print it
