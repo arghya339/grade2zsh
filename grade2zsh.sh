@@ -97,14 +97,25 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
             # pkg upgrade -y > /dev/null 2>&1
             if apt list --upgradeable 2>/dev/null | grep -q "^git/"; then
               echo "$running Updating git.."
-              pkg install git --upgrade
+              pkg install git --upgrade > /dev/null 2>&1
             fi
             if apt list --upgradeable 2>/dev/null | grep -q "^zsh/"; then
               echo "$running Updating zsh.."
-              pkg install zsh --upgrade
+              pkg install zsh --upgrade > /dev/null 2>&1
             fi
-            echo "$running Updating oh-my-zsh.."
-            omz update > /dev/null 2>&1
+            # Fetch updates from the remote repository
+            git -C "$ZSH" fetch origin > /dev/null 2>&1
+            # Check if there are any changes (compare local and remote branches)
+            omzLocal=$(git -C "$ZSH" rev-parse master 2>/dev/null)
+            omzRemote=$(git -C "$ZSH" rev-parse origin/master 2>/dev/null)
+            # If there is a difference, then update omz
+            if [ "$omzLocal" != "$omzRemote" ]; then
+              echo "$running Updating oh-my-zsh.."
+              # omz update > /dev/null 2>&1
+              sh ~/.oh-my-zsh/tools/upgrade.sh > /dev/null 2>&1
+              # omz changelog  # Show changelog
+              # sleep 30  # wait 30 seconds
+            fi
             echo "$running Pulling oh-my-zsh plugins.."
             git pull https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions > /dev/null 2>&1
             git pull https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting > /dev/null 2>&1
