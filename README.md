@@ -16,7 +16,7 @@ Customize your Termux by upgrade to zsh
 - Open [Termux](https://github.com/termux/termux-app/releases/) and run the script with the following command:
 
   ```
-  curl -o "$HOME/grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh" && clear && sh $HOME/grade2zsh.sh
+  curl -o "$HOME/.grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh" && sh $HOME/.grade2zsh.sh
   ```
   run
   ```

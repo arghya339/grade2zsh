@@ -1,9 +1,9 @@
 #!/usr/bin/dash
 
 if [ ! -f "$PREFIX/bin/grade2zsh" ]; then
-  ln -s $HOME/grade2zsh.sh $PREFIX/bin/grade2zsh  # symlink (shortcut of grade2zsh.sh)
+  ln -s $HOME/.grade2zsh.sh $PREFIX/bin/grade2zsh  # symlink (shortcut of grade2zsh.sh)
 fi
-chmod +x $HOME/grade2zsh.sh  # give execute permission to grade2zsh
+chmod +x $HOME/.grade2zsh.sh  # give execute permission to grade2zsh
 
 # Apply the grade2zsh color to the eye shape and print it
 Reset='\033[0m'
@@ -92,7 +92,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
         read -r -p "Select: " input
         case "$input" in
           [Uu][pp]*)
-            curl -o "$HOME/grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh" > /dev/null 2>&1
+            curl -o "$HOME/.grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh" > /dev/null 2>&1
             # echo "$running Updating Termux pkg.."
             # pkg upgrade -y > /dev/null 2>&1
             if apt list --upgradeable 2>/dev/null | grep -q "^git/"; then
