@@ -253,11 +253,11 @@ else
 
   # grep -vF 'plugins=(git)' ~/.zshrc > ~/.zshrc.tmp && mv ~/.zshrc.tmp ~/.zshrc  # remove this line from .zshrc
   # echo "plugins=(git zsh-autosuggestions zsh-syntax-highlighting)" >> ~/.zshrc  # add this line into .zshrc
-  sleep 1  # wait 1 second
-  # exec $PREFIX/bin/zsh  # Restart zsh Interpreter
   echo "$info zsh installed successfully, please restart Termux to take effect."
   sleep 3  # wait 3 seconds
   clear  # clear previous session
+  sleep 1  # wait 1 second
+  exec $PREFIX/bin/zsh  # Restart zsh Interpreter
   sh $fullScriptPath  # run script again
   exit 0  # exit from script loop
 fi
