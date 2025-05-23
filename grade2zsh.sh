@@ -206,6 +206,8 @@ else
   pkill apt  # Forcefully kill apt process
   pkill dpkg && yes | dpkg --configure -a  # Forcefully kill dpkg process and configure dpkg
 
+  echo "deb https://mirrors.ustc.edu.cn/termux/termux-main stable main" > $PREFIX/etc/apt/sources.list && pkg update >/dev/null 2>&1 && pkg --check-mirror update >/dev/null 2>&1  # termux-change-repo && pkg --check-mirror update
+
   # --- install zsh pkg ---
   if [ ! -f "$PREFIX/bin/zsh" ]; then
     echo "$running Installing zsh Interpreter.."
