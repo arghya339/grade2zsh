@@ -72,13 +72,13 @@ comment
   FMT_RESET=$(printf '\033[0m')
 
   # Construct the grade2zsh shape using string concatenation (ANSI Slan Font)
+  echo "       ${TrueBlue}https://github.com/arghya339/grade2zsh${Reset}"
   printf '%s          %s      %s      %s   __%s  %s  ___  %s    %s       %s__  %s\n'  $FMT_RAINBOW $FMT_RESET
   printf '%s   ____ _%s_____%s____ _%s____/ /%s__ %s|__ \%s____%s  _____%s/ /_ %s\n'  $FMT_RAINBOW $FMT_RESET
   printf '%s  / __ `/%s ___/%s __ `/%s __  /%s _ \%s__/ /%s_  /%s / ___/%s __ \%s\n'  $FMT_RAINBOW $FMT_RESET
   printf '%s / /_/ /%s /  %s/ /_/ /%s /_/ /%s  __/%s __/%s / /_%s(__  )%s / / /%s\n'  $FMT_RAINBOW $FMT_RESET
   printf '%s \__, /%s_/   %s\__,_/%s\__,_/%s\___/%s____/%s/___/%s____/%s_/ /_/ %s\n'  $FMT_RAINBOW $FMT_RESET
   printf '%s/____/ %s      %s     %s        >_𝒟𝑒𝓋𝑒𝓁𝑜𝓅𝑒𝓇: @𝒶𝓇𝑔𝒽𝓎𝒶𝟥𝟥𝟫%s%s%s%s%s   %s\n'  $FMT_RAINBOW $FMT_RESET
-  echo "${TrueBlue}https://github.com/arghya339/grade2zsh${Reset}\n"
   printf '\n'
   printf '\n'
 }
