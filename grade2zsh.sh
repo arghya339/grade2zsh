@@ -1,5 +1,6 @@
 #!/usr/bin/dash
 
+curl -sL -o "$HOME/.grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh"
 if [ ! -f "$PREFIX/bin/grade2zsh" ]; then
   ln -s $HOME/.grade2zsh.sh $PREFIX/bin/grade2zsh  # symlink (shortcut of grade2zsh.sh)
 fi
@@ -25,8 +26,9 @@ Cyan='\033[36m'
 NeonCyan='\033[38;2;0;255;255m'
 White='\033[37m'
 
-# Local Variable
+# Global Variable
 fullScriptPath=$(realpath "$0")  # Get the full path of the currently running script
+Android=$(getprop ro.build.version.release)  # Get Android version
 
 # Colored log indicators
 good="\033[92;1m[✔]\033[0m"
@@ -92,7 +94,6 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
         read -r -p "Select: " input
         case "$input" in
           [Uu][pp]*)
-            curl -o "$HOME/.grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh" > /dev/null 2>&1
             # echo "$running Updating Termux pkg.."
             # pkg upgrade -y > /dev/null 2>&1
             if apt list --upgradeable 2>/dev/null | grep -q "^git/"; then
@@ -154,8 +155,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
             ;;
           [Uu][Nn]*)
             # Prompt for user choice on changing the default login shell
-            echo "${Yellow}Do you want to uninstall zsh and change your default shell to bash/dash? [Y/n]${Reset}"
-            read -r -p "Select: " opt
+            echo "${Yellow}Do you want to change your default shell to bash? [Y/n]:${Reset} \c" && read opt
             case $opt in
               y*|Y*|"")
                 echo "$running Uninstalling Git.."
@@ -172,19 +172,21 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
                 pkg uninstall zsh -y > /dev/null 2>&1
                 #echo "$running Remove grade2zsh.sh file.."
                 rm $PREFIX/bin/grade2zsh && rm $HOME/grade2zsh.sh  #rm $fullScriptPath
-                # exec $PREFIX/bin/zsh  # Restart zsh Interpreter
                 sleep 1  # wait 1 second
                 clear  # clear Terminal
-                echo "$info zsh uninstalled successfully, Please close then reopen Termux to take effect. \nTo close Termux type: exit"
+                echo "Thanks for trying out Zsh. It's been uninstalled.\nDon't forget to restart your terminal!"
+                echo "$info Please close then reopen Termux to take effect! \nTo close Termux type: ${Green}exit${Reset} and press [↵] key."
                 sleep 5  # wait 5 seconds
+                chsh -s bash  # Restore Termux Default Shell
+                exec $PREFIX/bin/zsh  # Restart zsh Interpreter
                 break  # Break out of the loop
                 ;;
-              n*|N*) echo "$notice Shell change skipped.";sleep 1 ;;
-              *) echo "$info Invalid choice. Shell change skipped."; sleep 2 ;;
+              n*|N*) echo "$notice Shell change skipped!"; sleep 1 ;;
+              *) echo "$info Invalid choice! Shell change skipped."; sleep 2 ;;
             esac
             ;;
           [Qq]*)
-            echo "$info Exiting.."
+            echo "Script exited !!"
             sleep 0.5  # wait 500 milliseconds
             clear  # clear Terminal
             break  # Break out of the loop
@@ -224,11 +226,20 @@ else
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
     echo "$running Installing oh-my-zsh.."
     yes | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" > /dev/null 2>&1
-    echo "zstyle ':omz:update' mode auto  # update automatically without asking" >> ~/.zshrc  # Add zsh Auto update config in oh-my-zsh zshrc file
-    echo "zstyle ':omz:update' verbose silent # only errors"  >> ~/.zshrc
+    # uncomment (enabled) zsh auto update config in oh-my-zsh zshrc file
+    if grep -q "^# zstyle ':omz:update' mode auto" "$HOME/.zshrc"; then
+      sed -i 'zstyle ':omz:update' mode auto/s/# //' "$HOME/.zshrc"
+    fi
+    # limit update verbosity
+    if grep -q "^# zstyle ':omz:update' verbose silent" "$HOME/.zshrc"; then
+      sed -i 'zstyle ':omz:update' verbose silent/s/# //' "$HOME/.zshrc"
+    else
+      echo "zstyle ':omz:update' verbose silent  # only errors"  >> ~/.zshrc
+    fi
     # -- set zsh as Termux default interpreter --
     export SHELL="$HOME/.oh-my-zsh"
-    chsh -s zsh  # Change Your Default Shell
+    echo "$running Changing your shell to zsh..."
+    chsh -s zsh  # Change Termux Default Shell
     # echo $0  # echo $SHELL
   fi
 
@@ -239,9 +250,8 @@ else
     # Add zsh-autosuggestions source to oh-my-zsh .zshrc file
     grep -q '^source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"$' ~/.zshrc || echo 'source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"' >> ~/.zshrc
     cat ~/.zshrc | grep ^'source "$ZSH/custom/plugins/zsh-autosuggestions"'  # print added line
-    echo " 1740403030:0;exit" >> ~/.zsh_history  # add exit command to .zsh_history file for auto suggestions
-    echo "
-    : 1740407010:0;grade2zsh" >> ~/.zsh_history  # add script command to .zsh_history file for auto suggestions
+    echo ": 1740403030:0;exit" >> ~/.zsh_history  # add exit command to .zsh_history file for auto suggestions
+    echo ": 1740407010:0;grade2zsh" >> ~/.zsh_history  # add script command to .zsh_history file for auto suggestions
   fi
 
   # clone and add zsh-syntax-highlighting plugins to oh-my-zsh
@@ -253,15 +263,28 @@ else
     cat ~/.zshrc | grep ^'source "$ZSH/custom/plugins/zsh-syntax-highlighting"'  # print added line
   fi
 
-  # grep -vF 'plugins=(git)' ~/.zshrc > ~/.zshrc.tmp && mv ~/.zshrc.tmp ~/.zshrc  # remove this line from .zshrc
-  # echo "plugins=(git zsh-autosuggestions zsh-syntax-highlighting)" >> ~/.zshrc  # add this line into .zshrc
-  echo "$info zsh installed successfully, please restart Termux to take effect."
+  if [ "$Android" -eq 6 ] && [ ! -f "$HOME/.termux/termux.properties" ]; then
+    # make .termux dir & create termux.properties file & change cursor blink rate to 500 & cursor style to bar
+    mkdir -p "$HOME/.termux" && echo "terminal-cursor-blink-rate = 500" > "$HOME/.termux/termux.properties"; echo "terminal-cursor-style = bar" >> "$HOME/.termux/termux.properties"
+  fi
+  if [ "$Android" -ge 6 ]; then
+    if grep -q "^# terminal-cursor-blink-rate" "$HOME/.termux/termux.properties"; then
+      sed -i 's/^# terminal-cursor-blink-rate = .*/terminal-cursor-blink-rate = 500/' "$HOME/.termux/termux.properties"  # uncomment & change cursor blink rate to 500
+    fi
+    if grep -q "^# terminal-cursor-style" "$HOME/.termux/termux.properties"; then
+      sed -i 's/^# terminal-cursor-style = .*/terminal-cursor-style = bar/' "$HOME/.termux/termux.properties"  # uncomment & change cursor style to bar
+    fi
+  fi
+
+  # add zsh-autosuggestions & zsh-syntax-highlighting if it's not already in the plugins list
+  sed -i '/^plugins=(/ { /zsh-autosuggestions/! s/)$/ zsh-autosuggestions)/; /zsh-syntax-highlighting/! s/)$/ zsh-syntax-highlighting)/; }' ~/.zshrc
+  echo "$info zsh installed successfully, please restart Termux to take effect!"
   sleep 3  # wait 3 seconds
   clear  # clear previous session
-  sleep 1  # wait 1 second
+  echo "${Green}Shell successfully changed to 'zsh'.${Reset}"
+  termux-reload-settings  # reload (restart) Termux settings
   exec $PREFIX/bin/zsh  # Restart zsh Interpreter
   sh $fullScriptPath  # run script again
   exit 0  # exit from script loop
 fi
-
 #############################################
