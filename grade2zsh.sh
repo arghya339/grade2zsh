@@ -278,10 +278,7 @@ else
 
   # add zsh-autosuggestions & zsh-syntax-highlighting if it's not already in the plugins list
   sed -i '/^plugins=(/ { /zsh-autosuggestions/! s/)$/ zsh-autosuggestions)/; /zsh-syntax-highlighting/! s/)$/ zsh-syntax-highlighting)/; }' ~/.zshrc
-  echo "$info zsh installed successfully, please restart Termux to take effect!"
-  sleep 3  # wait 3 seconds
-  clear  # clear previous session
-  echo "${Green}Shell successfully changed to 'zsh'.${Reset}"
+  echo "${Green}Shell successfully changed to 'zsh'.${Reset}\nDon't forget to restart your terminal!"
   termux-reload-settings  # reload (restart) Termux settings
   exec $PREFIX/bin/zsh  # Restart zsh Interpreter
   sh $fullScriptPath  # run script again
