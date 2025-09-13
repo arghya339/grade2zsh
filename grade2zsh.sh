@@ -164,13 +164,16 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
                 sed -i '/read -r -p "Are you sure you want to remove Oh My Zsh? \[y\/N\] " confirmation/,/^fi$/ s/^/# /' $HOME/.oh-my-zsh/tools/uninstall.sh
                 # uninstall_oh_my_zsh
                 # yes | uninstall_oh_my_zsh
-                sh $HOME/.oh-my-zsh/tools/uninstall.sh
+                sh $HOME/.oh-my-zsh/tools/uninstall.sh > /dev/null 2>&1
                 # rm -rf ~/.oh-my-zsh
                 rm ~/.zshrc.omz-uninstalled-$(date +%Y-%m-%d_%H)*
                 rm ~/.zsh_history
+                rm -f ~/.zcompdump*
                 echo "$running Uninstalling zsh.."
                 pkg uninstall zsh -y > /dev/null 2>&1
                 #echo "$running Remove grade2zsh.sh file.."
+                grep -q "^terminal-cursor-blink-rate = 500" "$HOME/.termux/termux.properties" && sed -i 's/^terminal-cursor-blink-rate = 500/# terminal-cursor-blink-rate = 0/' "$HOME/.termux/termux.properties"
+                grep -q "^terminal-cursor-style = bar" "$HOME/.termux/termux.properties" && sed -i 's/^terminal-cursor-style = bar/# terminal-cursor-style = block/' "$HOME/.termux/termux.properties"
                 rm $PREFIX/bin/grade2zsh && rm $HOME/grade2zsh.sh  #rm $fullScriptPath
                 sleep 1  # wait 1 second
                 clear  # clear Terminal
