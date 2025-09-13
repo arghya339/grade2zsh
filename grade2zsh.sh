@@ -28,7 +28,7 @@ White='\033[37m'
 
 # Global Variable
 fullScriptPath=$(realpath "$0")  # Get the full path of the currently running script
-Android=$(getprop ro.build.version.release)  # Get Android version
+Android=$(getprop ro.build.version.release | cut -d. -f1)  # Get major Android version
 
 # Colored log indicators
 good="\033[92;1m[✔]\033[0m"
@@ -228,7 +228,7 @@ else
     yes | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" > /dev/null 2>&1
     # uncomment (enabled) zsh auto update config in oh-my-zsh zshrc file
     if grep -q "^# zstyle ':omz:update' mode auto" "$HOME/.zshrc"; then
-      sed -i 'zstyle ':omz:update' mode auto/s/# //' "$HOME/.zshrc"
+      sed -i "s/^# \(zstyle ':omz:update' mode auto\)/\1/" "$HOME/.zshrc"
     fi
     # limit update verbosity
     if grep -q "^# zstyle ':omz:update' verbose silent" "$HOME/.zshrc"; then
