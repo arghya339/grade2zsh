@@ -174,7 +174,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
                 #echo "$running Remove grade2zsh.sh file.."
                 grep -q "^terminal-cursor-blink-rate = 500" "$HOME/.termux/termux.properties" && sed -i 's/^terminal-cursor-blink-rate = 500/# terminal-cursor-blink-rate = 0/' "$HOME/.termux/termux.properties"
                 grep -q "^terminal-cursor-style = bar" "$HOME/.termux/termux.properties" && sed -i 's/^terminal-cursor-style = bar/# terminal-cursor-style = block/' "$HOME/.termux/termux.properties"
-                rm $PREFIX/bin/grade2zsh && rm $HOME/grade2zsh.sh  #rm $fullScriptPath
+                rm $PREFIX/bin/grade2zsh && rm $HOME/.grade2zsh.sh  #rm $fullScriptPath
                 sleep 1  # wait 1 second
                 clear  # clear Terminal
                 echo "Thanks for trying out Zsh. It's been uninstalled.\nDon't forget to restart your terminal!"
