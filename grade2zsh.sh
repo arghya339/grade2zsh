@@ -6,7 +6,7 @@ if [ ! -f "$PREFIX/bin/grade2zsh" ]; then
 fi
 chmod +x $HOME/.grade2zsh.sh  # give execute permission to grade2zsh
 
-# Apply the grade2zsh color to the eye shape and print it
+# ANSI color code
 Reset='\033[0m'
 Red='\033[31m'
 NeonRed='\033[38;2;255;0;0m'
@@ -94,6 +94,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
         read -r -p "Select: " input
         case "$input" in
           [Uu][pp]*)
+            pkg update > /dev/null 2>&1  # It downloads latest package list with versions from Termux remote repository, then compares them to local (installed) pkg versions, and shows a list of what can be upgraded if they are different.
             # echo "$running Updating Termux pkg.."
             # pkg upgrade -y > /dev/null 2>&1
             if apt list --upgradeable 2>/dev/null | grep -q "^git/"; then
