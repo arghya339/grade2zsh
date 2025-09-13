@@ -175,10 +175,10 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
                 sleep 1  # wait 1 second
                 clear  # clear Terminal
                 echo "Thanks for trying out Zsh. It's been uninstalled.\nDon't forget to restart your terminal!"
-                echo "$info Please close then reopen Termux to take effect! \nTo close Termux type: ${Green}exit${Reset} and press [↵] key."
+                termux-open-url "https://github.com/arghya339/grade2zsh"
                 sleep 5  # wait 5 seconds
                 chsh -s bash  # Restore Termux Default Shell
-                exec $PREFIX/bin/zsh  # Restart zsh Interpreter
+                exec $PREFIX/bin/bash  # Restart bash Interpreter
                 break  # Break out of the loop
                 ;;
               n*|N*) echo "$notice Shell change skipped!"; sleep 1 ;;
