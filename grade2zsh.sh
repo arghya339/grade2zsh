@@ -131,13 +131,13 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
             sed -i '/read -r -p "Are you sure you want to remove Oh My Zsh? \[y\/N\] " confirmation/,/^fi$/ s/^/# /' $HOME/.oh-my-zsh/tools/uninstall.sh
             # uninstall_oh_my_zsh
             # yes | uninstall_oh_my_zsh
-            sh $HOME/.oh-my-zsh/tools/uninstall.sh
+            sh $HOME/.oh-my-zsh/tools/uninstall.sh > /dev/null 2>&1
             # rm -rf ~/.oh-my-zsh
             rm ~/.zshrc.omz-uninstalled-$(date +%Y-%m-%d_%H)*
             # rm ~/.zsh_history
             yes | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" > /dev/null 2>&1
-            # echo "zstyle ':omz:update' mode auto  # update automatically without asking" >> ~/.zshrc  # Add zsh Auto update config in oh-my-zsh zshrc file
-            echo "zstyle ':omz:update' verbose silent # only errors"  >> ~/.zshrc  # omz setting for silent update
+            grep -q "^# zstyle ':omz:update' verbose silent" "$HOME/.zshrc" && sed -i 'zstyle ':omz:update' verbose silent/s/# //' "$HOME/.zshrc"  # uncomment (enabled) zsh auto update
+            grep -q "^# zstyle ':omz:update' verbose silent" "$HOME/.zshrc" && sed -i 'zstyle ':omz:update' verbose silent/s/# //' "$HOME/.zshrc"  # limit update verbosity
             # -- set zsh as Termux default interpreter --
             export SHELL="$HOME/.oh-my-zsh"
             chsh -s zsh  # set zsh as default
