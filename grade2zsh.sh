@@ -99,11 +99,11 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
             # pkg upgrade -y > /dev/null 2>&1
             if apt list --upgradeable 2>/dev/null | grep -q "^git/"; then
               echo "$running Updating git.."
-              pkg install git --upgrade > /dev/null 2>&1
+              pkg install --only-upgrade git -y > /dev/null 2>&1
             fi
             if apt list --upgradeable 2>/dev/null | grep -q "^zsh/"; then
               echo "$running Updating zsh.."
-              pkg install zsh --upgrade > /dev/null 2>&1
+              pkg install --only-upgrade zsh -y > /dev/null 2>&1
             fi
             # Fetch updates from the remote repository
             git -C "$ZSH" fetch origin > /dev/null 2>&1
@@ -217,13 +217,13 @@ else
   # --- install zsh pkg ---
   if [ ! -f "$PREFIX/bin/zsh" ]; then
     echo "$running Installing zsh Interpreter.."
-    pkg install zsh -y > /dev/null 2>&1
+    pkg install --upgrade zsh -y > /dev/null 2>&1
   fi
 
   # --- install git pkg ---
   if [ ! -f "$PREFIX/bin/git" ]; then
     echo "$running Installing Git.."
-    pkg install git -y > /dev/null 2>&1
+    pkg install --upgrade git -y > /dev/null 2>&1
   fi
 
   # --- install oh-my-zsh is an zsh plugin ---
