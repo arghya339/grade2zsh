@@ -284,7 +284,7 @@ else
   sed -i '/^plugins=(/ { /zsh-autosuggestions/! s/)$/ zsh-autosuggestions)/; /zsh-syntax-highlighting/! s/)$/ zsh-syntax-highlighting)/; }' ~/.zshrc
   echo "${Green}Shell successfully changed to 'zsh'.${Reset}\nDon't forget to restart your terminal!"
   termux-reload-settings  # reload (restart) Termux settings
-  exec $PREFIX/bin/zsh  # Restart zsh Interpreter
+  exec $PREFIX/bin/dash  # Restart dash Interpreter
   sh $fullScriptPath  # run script again
   exit 0  # exit from script loop
 fi
