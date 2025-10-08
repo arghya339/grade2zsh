@@ -89,8 +89,8 @@ comment
 clear  # clear Terminal
 
 menu() {
-  local -n options=$1
-  local -n buttons=$2
+  eval "local options=(\"\${$1[@]}\")"
+  eval "local buttons=(\"\${$2[@]}\")"
   
   selected_option=0
   selected_button=0
@@ -156,7 +156,7 @@ menu() {
 
 if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
     while true; do
-        options=(Update Reinstall Uninstall); buttons=("<Select>" "<Exit>"); selected=$(menu "options" "buttons")
+        options=(Update Reinstall Uninstall); buttons=("<Select>" "<Exit>"); selected=$(menu options buttons)
         case "${options[$selected]}" in
           [Uu][pp]*)
             pkg update > /dev/null 2>&1  # It downloads latest package list with versions from Termux remote repository, then compares them to local (installed) pkg versions, and shows a list of what can be upgraded if they are different.
