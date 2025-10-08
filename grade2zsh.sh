@@ -100,20 +100,24 @@ menu() {
     print_grade2zsh  # call print_grade2zsh function
     echo "Navigate with [↑] [↓] [←] [→]"
     echo "Select with [↵]\n"
-    for i in $(seq 0 $((${#options[@]} - 1))); do
+    i=0
+    for option in "${options[@]}"; do
       if [ $i -eq $selected_option ]; then
-        echo "${whiteBG}➤ ${options[$i]} $Reset"
+        echo "${whiteBG}➤ ${option} $Reset"
       else
-        echo "${options[$i]}"
+        echo "${option}"
       fi
+      i=$((i + 1))
     done
     echo
-    for i in $(seq 0 $((${#buttons[@]} - 1))); do
+    i=0
+    for button in "${buttons[@]}"; do
       if [ $i -eq $selected_button ]; then
-        [ $i -eq 0 ] && echo -n "${whiteBG}➤ ${buttons[$i]} $Reset" || echo -n "  ${whiteBG}➤ ${buttons[$i]} $Reset"
+        [ $i -eq 0 ] && echo -n "${whiteBG}➤ ${button} $Reset" || echo -n "  ${whiteBG}➤ ${button} $Reset"
       else
-        [ $i -eq 0 ] && echo -n "  ${buttons[$i]}" || echo -n "   ${buttons[$i]}"
+        [ $i -eq 0 ] && echo -n "  ${button}" || echo -n "   ${button}"
       fi
+      i=$((i + 1))
     done
     echo
   }
