@@ -25,6 +25,7 @@ NeonMagenta='\033[38;2;255;0;255m'
 Cyan='\033[36m'
 NeonCyan='\033[38;2;0;255;255m'
 White='\033[37m'
+whiteBG='\e[47m\e[30m'
 
 # Global Variable
 fullScriptPath=$(realpath "$0")  # Get the full path of the currently running script
@@ -87,12 +88,76 @@ comment
 
 clear  # clear Terminal
 
+menu() {
+  local -n options=$1
+  local -n buttons=$2
+  
+  selected_option=0
+  selected_button=0
+  
+  show_menu() {
+    printf '\033[2J\033[3J\033[H'
+    print_grade2zsh  # call print_grade2zsh function
+    echo "Navigate with [↑] [↓] [←] [→]"
+    echo "Select with [↵]\n"
+    for ((i=0; i<=$((${#options[@]} - 1)); i++)); do
+      if [ $i -eq $selected_option ]; then
+        echo "${whiteBG}➤ ${options[$i]} $Reset"
+      else
+        echo "${options[$i]}"
+      fi
+    done
+    echo
+    for ((i=0; i<=$((${#buttons[@]} - 1)); i++)); do
+      if [ $i -eq $selected_button ]; then
+        [ $i -eq 0 ] && echo -n "${whiteBG}➤ ${buttons[$i]} $Reset" || echo -n "  ${whiteBG}➤ ${buttons[$i]} $Reset"
+      else
+        [ $i -eq 0 ] && echo -n "  ${buttons[$i]}" || echo -n "   ${buttons[$i]}"
+      fi
+    done
+    echo
+  }
+
+  printf '\033[?25l'
+  while true; do
+    show_menu
+    read -rsn1 key
+    case $key in
+      $'\E')  # ESC
+        # /bin/bash -c 'read -r -p "Type any ESC key: " input && printf "You Entered: %q\n" "$input"'  # q=safelyQuoted
+        read -rsn2 -t 0.1 key2
+        case "$key2" in
+          '[A')  # Up arrow
+            selected_option=$((selected_option - 1))
+            [ $selected_option -lt 0 ] && selected_option=$((${#options[@]} - 1))
+            ;;
+          '[B')  # Down arrow
+            selected_option=$((selected_option + 1))
+            [ $selected_option -ge ${#options[@]} ] && selected_option=0
+            ;;
+          '[C')  # Right arrow
+            [ $selected_button -lt $((${#buttons[@]} - 1)) ] && selected_button=$((selected_button + 1))
+            ;;
+          '[D')  # Left arrow
+            [ $selected_button -gt 0 ] && selected_button=$((selected_button - 1))
+            ;;
+        esac
+        ;;
+      '')  # Enter key
+        break
+        ;;
+    esac
+  done
+  printf '\033[?25h'
+
+  [ $selected_button -eq 0 ] && { printf '\033[2J\033[3J\033[H'; return $selected_option; }
+  [ $selected_button -eq $((${#buttons[@]} - 1)) ] && { printf '\033[2J\033[3J\033[H'; echo "Script exited !!"; exit 0; }
+}
+
 if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
     while true; do
-        print_grade2zsh  # call print_grade2zsh function here
-        echo "Up. Update \nRe. Reinstall \nUn. Uninstall \nQu. Quit \n"
-        read -r -p "Select: " input
-        case "$input" in
+        options=(Update Reinstall Uninstall); buttons=("<Select>" "<Exit>"); selected=$(menu "options" "buttons")
+        case "${options[$selected]}" in
           [Uu][pp]*)
             pkg update > /dev/null 2>&1  # It downloads latest package list with versions from Termux remote repository, then compares them to local (installed) pkg versions, and shows a list of what can be upgraded if they are different.
             # echo "$running Updating Termux pkg.."
@@ -189,19 +254,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
               *) echo "$info Invalid choice! Shell change skipped."; sleep 2 ;;
             esac
             ;;
-          [Qq]*)
-            echo "Script exited !!"
-            sleep 0.5  # wait 500 milliseconds
-            clear  # clear Terminal
-            break  # Break out of the loop
-            ;;
-          *)
-            echo "$info Invalid input! Please enter: Up / Re / Un / Qu"
-            sleep 3  # wait 3 seconds (1 seconds = 1000 milliseconds)
-            ;;
         esac
-        clear
-        echo  # Add empty line for spacing before next prompt
     done
 else
   print_grade2zsh  # call print_grade2zsh function
