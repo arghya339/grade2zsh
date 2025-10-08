@@ -1,4 +1,4 @@
-#!/usr/bin/dash
+#!/usr/bin/bash
 
 curl -sL -o "$HOME/.grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh"
 if [ ! -f "$PREFIX/bin/grade2zsh" ]; then
@@ -41,8 +41,8 @@ question="\033[93;1m[?]\033[0m"
 
 # --- Checking Internet Connection ---
 if ! ping -c 1 -W 2 8.8.8.8 >/dev/null 2>&1 ; then
-    echo "$bad Oops! No Internet Connection available.\nConnect to the Internet and try again later."
-    return 1
+  echo -e "$bad Oops! No Internet Connection available.\nConnect to the Internet and try again later."
+  return 1
 fi
 
 # src: https://github.com/ohmyzsh/ohmyzsh/blob/master/tools/install.sh
@@ -89,8 +89,8 @@ comment
 clear  # clear Terminal
 
 menu() {
-  eval "local options=(\"\${$1[@]}\")"
-  eval "local buttons=(\"\${$2[@]}\")"
+  local -n options=$1
+  local -n buttons=$2
   
   selected_option=0
   selected_button=0
@@ -99,25 +99,21 @@ menu() {
     printf '\033[2J\033[3J\033[H'
     print_grade2zsh  # call print_grade2zsh function
     echo "Navigate with [↑] [↓] [←] [→]"
-    echo "Select with [↵]\n"
-    i=0
-    for option in "${options[@]}"; do
+    echo -e "Select with [↵]\n"
+    for ((i=0; i<=$((${#options[@]} - 1)); i++)); do
       if [ $i -eq $selected_option ]; then
-        echo "${whiteBG}➤ ${option} $Reset"
+        echo -e "${whiteBG}➤ ${options[$i]} $Reset"
       else
-        echo "${option}"
+        echo "${options[$i]}"
       fi
-      i=$((i + 1))
     done
     echo
-    i=0
-    for button in "${buttons[@]}"; do
+    for ((i=0; i<=$((${#buttons[@]} - 1)); i++)); do
       if [ $i -eq $selected_button ]; then
-        [ $i -eq 0 ] && echo -n "${whiteBG}➤ ${button} $Reset" || echo -n "  ${whiteBG}➤ ${button} $Reset"
+        [ $i -eq 0 ] && echo -ne "${whiteBG}➤ ${buttons[$i]} $Reset" || echo -ne "  ${whiteBG}➤ ${buttons[$i]} $Reset"
       else
-        [ $i -eq 0 ] && echo -n "  ${button}" || echo -n "   ${button}"
+        [ $i -eq 0 ] && echo -n "  ${buttons[$i]}" || echo -n "   ${buttons[$i]}"
       fi
-      i=$((i + 1))
     done
     echo
   }
@@ -160,18 +156,18 @@ menu() {
 
 if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
     while true; do
-        options=(Update Reinstall Uninstall); buttons=("<Select>" "<Exit>"); selected=$(menu options buttons)
+        options=(Update Reinstall Uninstall); buttons=("<Select>" "<Exit>"); selected=$(menu "options" "buttons")
         case "${options[$selected]}" in
           [Uu][pp]*)
             pkg update > /dev/null 2>&1  # It downloads latest package list with versions from Termux remote repository, then compares them to local (installed) pkg versions, and shows a list of what can be upgraded if they are different.
             # echo "$running Updating Termux pkg.."
             # pkg upgrade -y > /dev/null 2>&1
             if apt list --upgradeable 2>/dev/null | grep -q "^git/"; then
-              echo "$running Updating git.."
+              echo -e "$running Updating git.."
               pkg install --only-upgrade git -y > /dev/null 2>&1
             fi
             if apt list --upgradeable 2>/dev/null | grep -q "^zsh/"; then
-              echo "$running Updating zsh.."
+              echo -e "$running Updating zsh.."
               pkg install --only-upgrade zsh -y > /dev/null 2>&1
             fi
             # Fetch updates from the remote repository
@@ -181,23 +177,23 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
             omzRemote=$(git -C "$ZSH" rev-parse origin/master 2>/dev/null)
             # If there is a difference, then update omz
             if [ "$omzLocal" != "$omzRemote" ]; then
-              echo "$running Updating oh-my-zsh.."
+              echo -e "$running Updating oh-my-zsh.."
               # omz update > /dev/null 2>&1
               sh ~/.oh-my-zsh/tools/upgrade.sh > /dev/null 2>&1
               # omz changelog  # Show changelog
               # sleep 30  # wait 30 seconds
             fi
-            echo "$running Pulling oh-my-zsh plugins.."
+            echo -e "$running Pulling oh-my-zsh plugins.."
             git pull https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions > /dev/null 2>&1
             git pull https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting > /dev/null 2>&1
             sleep 1  # wait 1 second
             ;;
           [Rr][Ee]*)
-            echo "$running Reinstalling zsh.."
+            echo -e "$running Reinstalling zsh.."
             pkg reinstall zsh -y > /dev/null 2>&1
-            echo "$running Reinstalling Git.."
+            echo -e "$running Reinstalling Git.."
             pkg reinstall git -y > /dev/null 2>&1
-            echo "$running Reinstalling oh-my-zsh.."
+            echo -e "$running Reinstalling oh-my-zsh.."
             sed -i '/read -r -p "Are you sure you want to remove Oh My Zsh? \[y\/N\] " confirmation/,/^fi$/ s/^/# /' $HOME/.oh-my-zsh/tools/uninstall.sh
             # uninstall_oh_my_zsh
             # yes | uninstall_oh_my_zsh
@@ -211,12 +207,12 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
             # -- set zsh as Termux default interpreter --
             export SHELL="$HOME/.oh-my-zsh"
             chsh -s zsh  # set zsh as default
-            echo "$running Cloning zsh-autosuggestions plugins.."
+            echo -e "$running Cloning zsh-autosuggestions plugins.."
             git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions > /dev/null 2>&1
             # Add zsh-autosuggestions source to oh-my-zsh .zshrc file
             grep -q '^source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"$' ~/.zshrc || echo 'source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"' >> ~/.zshrc
             # cat ~/.zshrc | grep ^"source $ZSH/custom/plugins/zsh-autosuggestions"  # print added line
-            echo "$running Cloning zsh-syntax-highlighting plugins.."
+            echo -e "$running Cloning zsh-syntax-highlighting plugins.."
             git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting > /dev/null 2>&1
             # Add zsh-syntax-highlighting source to oh-my-zsh .zshrc
             grep -q '^source "$ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"$' ~/.zshrc || echo 'source "$ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"' >> ~/.zshrc
@@ -225,12 +221,12 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
             ;;
           [Uu][Nn]*)
             # Prompt for user choice on changing the default login shell
-            echo "${Yellow}Do you want to change your default shell to bash? [Y/n]:${Reset} \c" && read opt
+            echo -e "${Yellow}Do you want to change your default shell to bash? [Y/n]:${Reset} \c" && read opt
             case $opt in
               y*|Y*|"")
-                echo "$running Uninstalling Git.."
+                echo -e "$running Uninstalling Git.."
                 pkg uninstall git -y > /dev/null 2>&1
-                echo "$running Uninstalling oh-my-zsh.."
+                echo -e "$running Uninstalling oh-my-zsh.."
                 sed -i '/read -r -p "Are you sure you want to remove Oh My Zsh? \[y\/N\] " confirmation/,/^fi$/ s/^/# /' $HOME/.oh-my-zsh/tools/uninstall.sh
                 # uninstall_oh_my_zsh
                 # yes | uninstall_oh_my_zsh
@@ -239,23 +235,23 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
                 rm ~/.zshrc.omz-uninstalled-$(date +%Y-%m-%d_%H)*
                 rm ~/.zsh_history
                 rm -f ~/.zcompdump*
-                echo "$running Uninstalling zsh.."
+                echo -e "$running Uninstalling zsh.."
                 pkg uninstall zsh -y > /dev/null 2>&1
-                #echo "$running Remove grade2zsh.sh file.."
+                #echo -e "$running Remove grade2zsh.sh file.."
                 grep -q "^terminal-cursor-blink-rate = 500" "$HOME/.termux/termux.properties" && sed -i 's/^terminal-cursor-blink-rate = 500/# terminal-cursor-blink-rate = 0/' "$HOME/.termux/termux.properties"
                 grep -q "^terminal-cursor-style = bar" "$HOME/.termux/termux.properties" && sed -i 's/^terminal-cursor-style = bar/# terminal-cursor-style = block/' "$HOME/.termux/termux.properties"
                 rm $PREFIX/bin/grade2zsh && rm $HOME/.grade2zsh.sh  #rm $fullScriptPath
                 sleep 1  # wait 1 second
                 clear  # clear Terminal
-                echo "Thanks for trying out Zsh. It's been uninstalled.\nDon't forget to restart your terminal!"
+                echo -e "Thanks for trying out Zsh. It's been uninstalled.\nDon't forget to restart your terminal!"
                 termux-open-url "https://github.com/arghya339/grade2zsh"
                 sleep 5  # wait 5 seconds
                 chsh -s bash  # Restore Termux Default Shell
                 exec $PREFIX/bin/bash  # Restart bash Interpreter
                 break  # Break out of the loop
                 ;;
-              n*|N*) echo "$notice Shell change skipped!"; sleep 1 ;;
-              *) echo "$info Invalid choice! Shell change skipped."; sleep 2 ;;
+              n*|N*) echo -e "$notice Shell change skipped!"; sleep 1 ;;
+              *) echo -e "$info Invalid choice! Shell change skipped."; sleep 2 ;;
             esac
             ;;
         esac
@@ -263,7 +259,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
 else
   print_grade2zsh  # call print_grade2zsh function
   # --- Update Termux pkg ---
-  echo "$running Updating Termux pkg.."
+  echo -e "$running Updating Termux pkg.."
   pkill pkg && { pkg update && pkg upgrade -y; } > /dev/null 2>&1  # discarding output
  
   pkill apt  # Forcefully kill apt process
@@ -273,19 +269,19 @@ else
 
   # --- install zsh pkg ---
   if [ ! -f "$PREFIX/bin/zsh" ]; then
-    echo "$running Installing zsh Interpreter.."
+    echo -e "$running Installing zsh Interpreter.."
     pkg install --upgrade zsh -y > /dev/null 2>&1
   fi
 
   # --- install git pkg ---
   if [ ! -f "$PREFIX/bin/git" ]; then
-    echo "$running Installing Git.."
+    echo -e "$running Installing Git.."
     pkg install --upgrade git -y > /dev/null 2>&1
   fi
 
   # --- install oh-my-zsh is an zsh plugin ---
   if [ ! -d "$HOME/.oh-my-zsh" ]; then
-    echo "$running Installing oh-my-zsh.."
+    echo -e "$running Installing oh-my-zsh.."
     yes | sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" > /dev/null 2>&1
     # uncomment (enabled) zsh auto update config in oh-my-zsh zshrc file
     if grep -q "^# zstyle ':omz:update' mode auto" "$HOME/.zshrc"; then
@@ -299,14 +295,14 @@ else
     fi
     # -- set zsh as Termux default interpreter --
     export SHELL="$HOME/.oh-my-zsh"
-    echo "$running Changing your shell to zsh..."
+    echo -e "$running Changing your shell to zsh..."
     chsh -s zsh  # Change Termux Default Shell
     # echo $0  # echo $SHELL
   fi
 
   # clone and add zsh-autosuggestions plugins to oh-my-zsh
   if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-autosuggestions" ]; then
-    echo "$running Cloning zsh-autosuggestions plugins.."
+    echo -e "$running Cloning zsh-autosuggestions plugins.."
     git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions > /dev/null 2>&1
     # Add zsh-autosuggestions source to oh-my-zsh .zshrc file
     grep -q '^source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"$' ~/.zshrc || echo 'source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"' >> ~/.zshrc
@@ -317,7 +313,7 @@ else
 
   # clone and add zsh-syntax-highlighting plugins to oh-my-zsh
   if [ ! -d "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting" ]; then
-    echo "$running Cloning zsh-syntax-highlighting plugins.."
+    echo -e "$running Cloning zsh-syntax-highlighting plugins.."
     git clone https://github.com/zsh-users/zsh-syntax-highlighting.git ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting > /dev/null 2>&1
     # Add zsh-syntax-highlighting source to oh-my-zsh .zshrc
     grep -q '^source "$ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"$' ~/.zshrc || echo 'source "$ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"' >> ~/.zshrc
@@ -339,10 +335,10 @@ else
 
   # add zsh-autosuggestions & zsh-syntax-highlighting if it's not already in the plugins list
   sed -i '/^plugins=(/ { /zsh-autosuggestions/! s/)$/ zsh-autosuggestions)/; /zsh-syntax-highlighting/! s/)$/ zsh-syntax-highlighting)/; }' ~/.zshrc
-  echo "${Green}Shell successfully changed to 'zsh'.${Reset}\nDon't forget to restart your terminal!"
+  echo -e "${Green}Shell successfully changed to 'zsh'.${Reset}\nDon't forget to restart your terminal!"
   termux-reload-settings  # reload (restart) Termux settings
   exec $PREFIX/bin/dash  # Restart dash Interpreter
-  sh $fullScriptPath  # run script again
+  bash $fullScriptPath  # run script again
   exit 0  # exit from script loop
 fi
 #############################################

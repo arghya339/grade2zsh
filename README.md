@@ -24,7 +24,7 @@ Customize your Termux by upgrade to zsh
 
 - Run the script with the following command:
   ```sh
-  curl --progress-bar -o "$HOME/.grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh" && sh $HOME/.grade2zsh.sh
+  curl --progress-bar -o "$HOME/.grade2zsh.sh" "https://raw.githubusercontent.com/arghya339/grade2zsh/refs/heads/main/grade2zsh.sh" && bash $HOME/.grade2zsh.sh
   ```
 - run
   ```
