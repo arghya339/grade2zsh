@@ -150,13 +150,13 @@ menu() {
   done
   printf '\033[?25h'
 
-  [ $selected_button -eq 0 ] && { printf '\033[2J\033[3J\033[H'; return $selected_option; }
+  [ $selected_button -eq 0 ] && { printf '\033[2J\033[3J\033[H'; selected=$selected_option; }
   [ $selected_button -eq $((${#menu_buttons[@]} - 1)) ] && { printf '\033[2J\033[3J\033[H'; echo "Script exited !!"; exit 0; }
 }
 
 if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
     while true; do
-        options=("Update" "Reinstall" "Uninstall"); buttons=("<Select>" "<Exit>"); selected=$(menu "options" "buttons")
+        options=("Update" "Reinstall" "Uninstall"); buttons=("<Select>" "<Exit>"); menu "options" "buttons"
         case "${options[$selected]}" in
           [Uu][pp]*)
             pkg update > /dev/null 2>&1  # It downloads latest package list with versions from Termux remote repository, then compares them to local (installed) pkg versions, and shows a list of what can be upgraded if they are different.
