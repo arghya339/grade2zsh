@@ -89,8 +89,8 @@ comment
 clear  # clear Terminal
 
 menu() {
-  local -n options=$1
-  local -n buttons=$2
+  local -n menu_options=$1
+  local -n menu_buttons=$2
   
   selected_option=0
   selected_button=0
@@ -100,19 +100,19 @@ menu() {
     print_grade2zsh  # call print_grade2zsh function
     echo "Navigate with [↑] [↓] [←] [→]"
     echo -e "Select with [↵]\n"
-    for ((i=0; i<=$((${#options[@]} - 1)); i++)); do
+    for ((i=0; i<=$((${#menu_options[@]} - 1)); i++)); do
       if [ $i -eq $selected_option ]; then
-        echo -e "${whiteBG}➤ ${options[$i]} $Reset"
+        echo -e "${whiteBG}➤ ${menu_options[$i]} $Reset"
       else
-        echo "${options[$i]}"
+        echo "${menu_options[$i]}"
       fi
     done
     echo
-    for ((i=0; i<=$((${#buttons[@]} - 1)); i++)); do
+    for ((i=0; i<=$((${#menu_buttons[@]} - 1)); i++)); do
       if [ $i -eq $selected_button ]; then
-        [ $i -eq 0 ] && echo -ne "${whiteBG}➤ ${buttons[$i]} $Reset" || echo -ne "  ${whiteBG}➤ ${buttons[$i]} $Reset"
+        [ $i -eq 0 ] && echo -ne "${whiteBG}➤ ${menu_buttons[$i]} $Reset" || echo -ne "  ${whiteBG}➤ ${menu_buttons[$i]} $Reset"
       else
-        [ $i -eq 0 ] && echo -n "  ${buttons[$i]}" || echo -n "   ${buttons[$i]}"
+        [ $i -eq 0 ] && echo -n "  ${menu_buttons[$i]}" || echo -n "   ${menu_buttons[$i]}"
       fi
     done
     echo
@@ -129,14 +129,14 @@ menu() {
         case "$key2" in
           '[A')  # Up arrow
             selected_option=$((selected_option - 1))
-            [ $selected_option -lt 0 ] && selected_option=$((${#options[@]} - 1))
+            [ $selected_option -lt 0 ] && selected_option=$((${#menu_options[@]} - 1))
             ;;
           '[B')  # Down arrow
             selected_option=$((selected_option + 1))
-            [ $selected_option -ge ${#options[@]} ] && selected_option=0
+            [ $selected_option -ge ${#menu_options[@]} ] && selected_option=0
             ;;
           '[C')  # Right arrow
-            [ $selected_button -lt $((${#buttons[@]} - 1)) ] && selected_button=$((selected_button + 1))
+            [ $selected_button -lt $((${#menu_buttons[@]} - 1)) ] && selected_button=$((selected_button + 1))
             ;;
           '[D')  # Left arrow
             [ $selected_button -gt 0 ] && selected_button=$((selected_button - 1))
@@ -151,7 +151,7 @@ menu() {
   printf '\033[?25h'
 
   [ $selected_button -eq 0 ] && { printf '\033[2J\033[3J\033[H'; return $selected_option; }
-  [ $selected_button -eq $((${#buttons[@]} - 1)) ] && { printf '\033[2J\033[3J\033[H'; echo "Script exited !!"; exit 0; }
+  [ $selected_button -eq $((${#menu_buttons[@]} - 1)) ] && { printf '\033[2J\033[3J\033[H'; echo "Script exited !!"; exit 0; }
 }
 
 if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
