@@ -88,6 +88,53 @@ comment
 
 clear  # clear Terminal
 
+# Y/n prompt function
+confirmPrompt() {
+  Prompt=${1}
+  Selected=${2:-0}  # :- set value as 0 if unset
+  maxLen=50
+  
+  # breaks long prompts into multiple lines (50 characters per line)
+  lines=()  # empty array
+  while [ -n "$Prompt" ]; do
+    lines+=("${Prompt:0:$maxLen}")  # take first 50 characters from $Prompt starting at index 0
+    Prompt="${Prompt:$maxLen}"  # removes first 50 characters from $Prompt by starting at 50 to 0
+  done
+  
+  # print all-lines except last-line
+  last_line_index=$(( ${#lines[@]} - 1 ))  # ${#lines[@]} = number of elements in lines array
+  for (( i=0; i<last_line_index; i++ )); do
+    echo "${lines[i]}"
+  done
+  last_line="${lines[$last_line_index]}"
+  
+  echo -ne '\033[?25l'  # Hide cursor
+  while true; do
+    show_prompt() {
+      echo -ne "\r\033[K"  # n=noNewLine r=returnCursorToStartOfLine \033[K=clearLine
+      echo -ne "$last_line "
+      [ $Selected -eq 0 ] && echo -ne "${whiteBG}➤ <Yes> $Reset   <No>" || echo -ne "  <Yes>  ${whiteBG}➤ <No> $Reset"  # highlight selected bt with white bg
+    }; show_prompt
+
+    read -rsn1 key
+    case $key in
+      $'\E')
+      # /bin/bash -c 'read -r -p "Type any ESC key: " input && printf "You Entered: %q\n" "$input"'  # q=safelyQuoted
+        read -rsn2 -t 0.1 key2  # -r=readRawInput -s=silent(noOutput) -t=timeout -n2=readTwoChar | waits upto 0.1s=100ms to read key 
+        case $key2 in 
+          '[C') Selected=1 ;;  # right arrow key
+          '[D') Selected=0 ;;  # left arrow key
+        esac
+        ;;
+      [Yy]*) Selected=0; show_prompt; break ;;
+      [Nn]*) Selected=1; show_prompt; break ;;
+      "") break ;;  # Enter key
+    esac
+  done
+  echo -e '\033[?25h' # Show cursor
+  return $Selected  # return Selected int index from this fun
+}
+
 menu() {
   local -n menu_options=$1
   local -n menu_buttons=$2
@@ -221,7 +268,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
             ;;
           [Uu][Nn]*)
             # Prompt for user choice on changing the default login shell
-            echo -e "${Yellow}Do you want to change your default shell to bash? [Y/n]:${Reset} \c" && read opt
+            confirmPrompt "Do you want to change your default shell to bash?" && opt=Yes || opt=No
             case $opt in
               y*|Y*|"")
                 echo -e "$running Uninstalling Git.."
@@ -251,7 +298,6 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
                 break  # Break out of the loop
                 ;;
               n*|N*) echo -e "$notice Shell change skipped!"; sleep 1 ;;
-              *) echo -e "$info Invalid choice! Shell change skipped."; sleep 2 ;;
             esac
             ;;
         esac
