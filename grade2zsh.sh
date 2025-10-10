@@ -268,7 +268,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
             ;;
           [Uu][Nn]*)
             # Prompt for user choice on changing the default login shell
-            confirmPrompt "Do you want to change your default shell to bash?" && opt=Yes || opt=No
+            confirmPrompt "Do you want to change your default shell to bash?" "1" && opt=Yes || opt=No
             case $opt in
               y*|Y*|"")
                 echo -e "$running Uninstalling Git.."
