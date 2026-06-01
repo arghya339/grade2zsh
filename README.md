@@ -21,6 +21,10 @@ Customize your Termux by upgrade to zsh
   ```sh
   pkg update && pkg upgrade -y
   ```
+  or,
+  ```sh
+  apt update && apt full-upgrade -y
+  ```
 
 - Run the script with the following command:
   ```sh

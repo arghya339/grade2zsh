@@ -276,6 +276,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
                 #echo -e "$running Remove grade2zsh.sh file.."
                 grep -q "^terminal-cursor-blink-rate = 500" "$HOME/.termux/termux.properties" && sed -i 's/^terminal-cursor-blink-rate = 500/# terminal-cursor-blink-rate = 0/' "$HOME/.termux/termux.properties"
                 grep -q "^terminal-cursor-style = bar" "$HOME/.termux/termux.properties" && sed -i 's/^terminal-cursor-style = bar/# terminal-cursor-style = block/' "$HOME/.termux/termux.properties"
+                [ -f $PREFIX/etc/motd.backup ] && mv $PREFIX/etc/motd.backup $PREFIX/etc/motd
                 rm $PREFIX/bin/grade2zsh && rm $HOME/.grade2zsh.sh  #rm $fullScriptPath
                 sleep 1  # wait 1 second
                 clear  # clear Terminal
@@ -368,6 +369,7 @@ else
       sed -i 's/^# terminal-cursor-style = .*/terminal-cursor-style = bar/' "$HOME/.termux/termux.properties"  # uncomment & change cursor style to bar
     fi
   fi
+  mv $PREFIX/etc/motd $PREFIX/etc/motd.backup
 
   # add zsh-autosuggestions & zsh-syntax-highlighting if it's not already in the plugins list
   sed -i '/^plugins=(/ { /zsh-autosuggestions/! s/)$/ zsh-autosuggestions)/; /zsh-syntax-highlighting/! s/)$/ zsh-syntax-highlighting)/; }' ~/.zshrc
