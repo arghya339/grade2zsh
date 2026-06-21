@@ -1,18 +1,19 @@
 <h1 align="center">grade2zsh</h1>
 <p align="center">
-Customize your Termux by upgrade to zsh
+Customize your Terminal by upgrade to zsh
 <br>
 <br>
 <img src="docs/.images/Main.png">
 <br>
 
 ## Purpose
-- This script automates the process of Upgrade or Downgrade Termux to zsh.
+- This script automates the process of Upgrade or Downgrade shell to zsh.
 
 ## Prerequisites
-- Android device with working internet connection and Termux installed.
+- A device with working internet connection.
 
 ## Usage
+![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white) ![macOS](https://img.shields.io/badge/mac%20os-000000?style=for-the-badge&logo=macos&logoColor=F0F0F0) ![Fedora](https://img.shields.io/badge/Fedora-294172?style=for-the-badge&logo=fedora&logoColor=white)
 - Open [Termux](https://github.com/termux/termux-app/releases/) and type following command and press `Enter` key twice:
   ```
   termux-change-repo
