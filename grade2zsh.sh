@@ -246,7 +246,7 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
         grep -q "^# zstyle ':omz:update' verbose silent" "$HOME/.zshrc" && sed -i 'zstyle ':omz:update' verbose silent/s/# //' "$HOME/.zshrc"  # uncomment (enabled) zsh auto update
         grep -q "^# zstyle ':omz:update' verbose silent" "$HOME/.zshrc" && sed -i 'zstyle ':omz:update' verbose silent/s/# //' "$HOME/.zshrc"  # limit update verbosity
         export SHELL="$HOME/.oh-my-zsh"
-        chsh -s $PREFIX/bin/zsh  # Set zsh as default interpreter
+        [ $isAndroid == true ] && chsh -s zsh || chsh -s $PREFIX/bin/zsh  # Set zsh as default interpreter
         echo -e "$running Cloning zsh-autosuggestions plugins.."; git clone https://github.com/zsh-users/zsh-autosuggestions ${ZSH_CUSTOM:-~/.oh-my-zsh/custom}/plugins/zsh-autosuggestions &> /dev/null
         grep -q '^source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"$' ~/.zshrc || echo 'source "$ZSH/custom/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh"' >> ~/.zshrc  # Add zsh-autosuggestions source to oh-my-zsh .zshrc file
         # cat ~/.zshrc | grep ^"source $ZSH/custom/plugins/zsh-autosuggestions"  # print added line
@@ -284,13 +284,26 @@ if [ -f "$PREFIX/bin/zsh" ] && [ -d "$HOME/.oh-my-zsh" ]; then
             printf '\033[2J\033[3J\033[H'  # clear Terminal
             echo -e "Thanks for trying out Zsh. It's been uninstalled.\nDon't forget to restart your terminal!"
             if [ $isAndroid == true ]; then termux-open-url "https://github.com/arghya339/grade2zsh"; elif [ $isMacOS == true ]; then open "https://github.com/arghya339/grade2zsh"; else xdg-open "https://github.com/arghya339/grade2zsh" &>/dev/null; fi
-            [ $isMacOS == false ] && { chsh -s $PREFIX/bin/bash && exec $PREFIX/bin/bash; }  # Restore Default Shell and Restart bash Interpreter
+            if [ $isMacOS == false ]; then
+              [ $isAndroid == true ] && chsh -s bash || chsh -s $PREFIX/bin/bash  # Restore Default Shell
+              exec $PREFIX/bin/bash  # Restart bash Interpreter
+            fi
             break
             ;;
           No) echo -e "$notice Shell change skipped !!"; sleep 1 ;;
         esac
         ;;
-      *) [ "${options[selected]}" == "zsh→bash" ] && { chsh -s $PREFIX/bin/bash; echo -e "$good default login shell changed to bash successfully! please restart Termux session to take effect."; exit 0; } || { chsh -s $PREFIX/bin/zsh; echo -e "$good default login shell changed to zsh successfully! please restart Termux session to take effect."; exit 0; } ;;
+      *) 
+        if [ "${options[selected]}" == "zsh→bash" ]; then
+          [ $isAndroid == true ] && chsh -s bash || chsh -s $PREFIX/bin/bash
+          echo -e "$good default login shell changed to bash successfully! please restart Termux session to take effect."
+          exit 0
+        else
+          [ $isAndroid == true ] && chsh -s zsh || chsh -s $PREFIX/bin/zsh
+          echo -e "$good default login shell changed to zsh successfully! please restart Termux session to take effect."
+          exit 0
+        fi
+        ;;
     esac
   done
 else
@@ -326,7 +339,8 @@ else
       grep -q "^# zstyle ':omz:update' mode auto" "$HOME/.zshrc" && sed -i "s/^# \(zstyle ':omz:update' mode auto\)/\1/" "$HOME/.zshrc"  # uncomment (enabled) zsh auto update config in oh-my-zsh zshrc file
       grep -q "^# zstyle ':omz:update' verbose silent" "$HOME/.zshrc" && sed -i 'zstyle ':omz:update' verbose silent/s/# //' "$HOME/.zshrc" || echo "zstyle ':omz:update' verbose silent  # only errors"  >> ~/.zshrc  # limit update verbosity
       export SHELL="$HOME/.oh-my-zsh"
-      echo -e "$running Changing your shell to zsh..."; chsh -s $PREFIX/bin/zsh  # Set zsh as default interpreter
+      echo -e "$running Changing your shell to zsh..."
+      [ $isAndroid == true ] && chsh -s zsh || chsh -s $PREFIX/bin/zsh  # Set zsh as default interpreter
     fi
   fi
   # Clone and add zsh-autosuggestions plugins to oh-my-zsh
